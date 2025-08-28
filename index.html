@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pesan Khusus Untukmu ❤️</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;600;700&family=Poppins:wght@300;400;500;600&display=swap');
+        
+        .dancing { font-family: 'Dancing Script', cursive; }
+        .poppins { font-family: 'Poppins', sans-serif; }
+        
+        .heart-float {
+            animation: heartFloat 3s ease-in-out infinite;
+        }
+        
+        @keyframes heartFloat {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(5deg); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.8s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .puzzle-shake {
+            animation: shake 0.5s ease-in-out;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+        
+        .romantic-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+        }
+        
+        .memory-item {
+            transition: all 0.3s ease;
+        }
+        
+        .memory-item.selected {
+            background: rgba(236, 72, 153, 0.8) !important;
+            transform: scale(1.02);
+        }
+        
+        .success-animation {
+            animation: successPulse 0.6s ease-in-out;
+        }
+        
+        @keyframes successPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body class="romantic-bg poppins">
+    <div class="min-h-screen flex items-center justify-center p-4">
+        <div class="w-full max-w-md">
+            
+            <!-- Level 1: Password -->
+            <div id="level1" class="glass-effect rounded-2xl p-8 text-center text-white fade-in">
+                <div class="heart-float text-6xl mb-6">💝</div>
+                <h1 class="dancing text-4xl font-bold mb-4 text-pink-200">Ada Pesan Khusus</h1>
+                <p class="mb-6 text-pink-100">Masukkan password untuk membuka pesan cinta ini...</p>
+                <input type="password" id="passwordInput" placeholder="Masukkan password..." 
+                       class="w-full p-4 rounded-lg bg-white/20 text-white placeholder-pink-200 border border-white/30 focus:outline-none focus:ring-2 focus:ring-pink-300 mb-4 text-center"
+                       onkeypress="handlePasswordEnter(event)">
+                <button onclick="checkPassword()" class="w-full bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white font-semibold py-4 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg">
+                    Buka Pesan 💕
+                </button>
+                <div class="mt-6 text-sm text-pink-200 bg-white/10 rounded-lg p-3">
+                    <p class="font-semibold mb-2">💡 Petunjuk Password:</p>
+                    <p>• Tanggal Valentine (DDMMYYYY)</p>
+                    <p>• Kata "cinta" atau "sayang"</p>
+                </div>
+            </div>
+
+            <!-- Level 2: Math Puzzle -->
+            <div id="level2" class="glass-effect rounded-2xl p-8 text-center text-white fade-in hidden">
+                <div class="heart-float text-6xl mb-6">🧮</div>
+                <h2 class="dancing text-4xl font-bold mb-4 text-pink-200">Teka-teki Cinta</h2>
+                <p class="mb-6 text-pink-100">Selesaikan perhitungan matematika ini:</p>
+                <div class="bg-white/20 rounded-lg p-6 mb-6 border border-white/30">
+                    <p class="text-3xl font-bold text-yellow-200" id="mathQuestion">Loading...</p>
+                </div>
+                <input type="number" id="mathAnswer" placeholder="Masukkan jawaban..." 
+                       class="w-full p-4 rounded-lg bg-white/20 text-white placeholder-pink-200 border border-white/30 focus:outline-none focus:ring-2 focus:ring-pink-300 mb-4 text-center text-xl"
+                       onkeypress="handleMathEnter(event)">
+                <button onclick="checkMath()" class="w-full bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white font-semibold py-4 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg">
+                    Periksa Jawaban 🤔
+                </button>
+            </div>
+
+            <!-- Level 3: Memory Game -->
+            <div id="level3" class="glass-effect rounded-2xl p-8 text-center text-white fade-in hidden">
+                <div class="heart-float text-6xl mb-6">💭</div>
+                <h2 class="dancing text-4xl font-bold mb-4 text-pink-200">Kenangan Kita</h2>
+                <p class="mb-6 text-pink-100">Klik kenangan kita sesuai urutan waktu (dari yang pertama):</p>
+                <div id="memoryItems" class="space-y-3 mb-6">
+                    <!-- Memory items will be inserted here -->
+                </div>
+                <div class="mb-4">
+                    <p class="text-sm text-pink-200">Urutan yang dipilih: <span id="selectedOrder" class="font-semibold">-</span></p>
+                </div>
+                <button onclick="checkMemory()" class="w-full bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white font-semibold py-4 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg">
+                    Periksa Urutan 💕
+                </button>
+                <button onclick="resetMemory()" class="w-full mt-3 bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-300">
+                    Reset Pilihan 🔄
+                </button>
+            </div>
+
+            <!-- Level 4: Final Message -->
+            <div id="finalMessage" class="glass-effect rounded-2xl p-8 text-center text-white fade-in hidden">
+                <div class="heart-float text-6xl mb-6">💖</div>
+                <h2 class="dancing text-4xl font-bold mb-6 text-pink-200">Untuk Cinta Hatiku</h2>
+                <div class="text-left space-y-4 mb-8 bg-white/10 rounded-lg p-6">
+                    <p class="text-pink-100 leading-relaxed font-semibold">Sayang,</p>
+                    <p class="text-pink-100 leading-relaxed">Aku tahu ini mungkin terdengar seperti permintaan yang berat, tapi aku ingin kamu tahu betapa seriusnya perasaanku.</p>
+                    <p class="text-pink-100 leading-relaxed text-center text-xl font-bold text-yellow-200">💕 Maukah kamu menikah denganku? 💕</p>
+                    <p class="text-pink-100 leading-relaxed">Tapi aku minta waktu... <strong class="text-yellow-200">Tunggu aku sampai aku mapan dan mampu</strong> memberikan kehidupan yang layak untukmu.</p>
+                    <p class="text-pink-100 leading-relaxed">Aku berjanji akan bekerja keras, menabung, dan mempersiapkan masa depan kita berdua. Kamu adalah motivasi terbesar dalam hidupku.</p>
+                    <p class="text-pink-100 leading-relaxed">Aku tidak meminta jawaban sekarang. Yang aku minta hanya kesabaranmu dan kepercayaanmu bahwa aku akan menjadi pria yang layak untukmu.</p>
+                </div>
+                <div class="dancing text-2xl text-pink-200 mb-6 bg-white/10 rounded-lg p-4">
+                    Dengan cinta yang tulus,<br>
+                    ❤️ Calon Suamimu ❤️
+                </div>
+                <button onclick="showResponse()" class="w-full bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white font-semibold py-4 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg">
+                    Berikan Respons 💝
+                </button>
+            </div>
+
+            <!-- Response Section -->
+            <div id="responseSection" class="glass-effect rounded-2xl p-8 text-center text-white fade-in hidden">
+                <div class="heart-float text-6xl mb-6">💌</div>
+                <h2 class="dancing text-4xl font-bold mb-6 text-pink-200">Respons Dari Hati</h2>
+                <p class="mb-6 text-pink-100">Bagaimana perasaanmu setelah membaca pesan ini?</p>
+                <div class="space-y-4">
+                    <button onclick="giveResponse('yes')" class="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-4 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg">
+                        💕 Ya, aku akan menunggumu dengan sabar
+                    </button>
+                    <button onclick="giveResponse('maybe')" class="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-4 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg">
+                        🤔 Aku perlu waktu untuk berpikir
+                    </button>
+                    <button onclick="giveResponse('talk')" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-4 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg">
+                        💬 Mari kita bicarakan ini lebih lanjut
+                    </button>
+                </div>
+            </div>
+
+            <!-- Final Response -->
+            <div id="finalResponse" class="glass-effect rounded-2xl p-8 text-center text-white fade-in hidden">
+                <div class="heart-float text-6xl mb-6">🌟</div>
+                <div id="responseMessage" class="dancing text-3xl mb-6 text-pink-200"></div>
+                <div id="responseDetail" class="text-pink-100 mb-6 bg-white/10 rounded-lg p-4"></div>
+                <button onclick="restart()" class="bg-purple-500 hover:bg-purple-600 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg">
+                    Mulai Lagi 🔄
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        let currentLevel = 1;
+        let mathAnswer = 0;
+        let memoryOrder = [];
+        let correctMemoryOrder = [1, 2, 3, 4];
+        let memoryItems = [
+            "Pertama kali kita bertemu",
+            "Chat pertama kita di media sosial", 
+            "Jalan-jalan pertama berdua",
+            "Saat aku mulai jatuh cinta padamu"
+        ];
+
+        // Initialize the app
+        function init() {
+            showLevel(1);
+            console.log('App initialized');
+        }
+
+        // Handle Enter key for password
+        function handlePasswordEnter(event) {
+            if (event.key === 'Enter') {
+                checkPassword();
+            }
+        }
+
+        // Handle Enter key for math
+        function handleMathEnter(event) {
+            if (event.key === 'Enter') {
+                checkMath();
+            }
+        }
+
+        // Check password
+        function checkPassword() {
+            const password = document.getElementById('passwordInput').value.trim().toLowerCase();
+            const validPasswords = ['14022023', 'cinta', 'sayang'];
+            
+            console.log('Checking password:', password);
+            
+            if (validPasswords.includes(password)) {
+                document.getElementById('level1').classList.add('success-animation');
+                setTimeout(() => {
+                    showLevel(2);
+                    initMathPuzzle();
+                }, 600);
+            } else {
+                const input = document.getElementById('passwordInput');
+                input.classList.add('puzzle-shake');
+                input.style.borderColor = '#ef4444';
+                setTimeout(() => {
+                    input.classList.remove('puzzle-shake');
+                    input.style.borderColor = '';
+                }, 500);
+                alert('❌ Password salah!\n\nCoba gunakan:\n• 14022023 (tanggal Valentine)\n• cinta\n• sayang');
+            }
+        }
+
+        // Initialize math puzzle
+        function initMathPuzzle() {
+            const operations = [
+                { type: 'add', symbol: '+' },
+                { type: 'multiply', symbol: '×' },
+                { type: 'subtract', symbol: '-' }
+            ];
+            
+            const operation = operations[Math.floor(Math.random() * operations.length)];
+            let num1, num2;
+            
+            switch(operation.type) {
+                case 'add':
+                    num1 = Math.floor(Math.random() * 50) + 10;
+                    num2 = Math.floor(Math.random() * 30) + 5;
+                    mathAnswer = num1 + num2;
+                    break;
+                case 'multiply':
+                    num1 = Math.floor(Math.random() * 12) + 3;
+                    num2 = Math.floor(Math.random() * 8) + 2;
+                    mathAnswer = num1 * num2;
+                    break;
+                case 'subtract':
+                    num1 = Math.floor(Math.random() * 50) + 30;
+                    num2 = Math.floor(Math.random() * 20) + 5;
+                    mathAnswer = num1 - num2;
+                    break;
+            }
+            
+            document.getElementById('mathQuestion').textContent = `${num1} ${operation.symbol} ${num2} = ?`;
+            console.log('Math puzzle initialized:', num1, operation.symbol, num2, '=', mathAnswer);
+        }
+
+        // Check math answer
+        function checkMath() {
+            const answer = parseInt(document.getElementById('mathAnswer').value);
+            console.log('Math answer check:', answer, 'vs', mathAnswer);
+            
+            if (answer === mathAnswer) {
+                document.getElementById('level2').classList.add('success-animation');
+                setTimeout(() => {
+                    showLevel(3);
+                    initMemoryGame();
+                }, 600);
+            } else {
+                const input = document.getElementById('mathAnswer');
+                input.classList.add('puzzle-shake');
+                input.style.borderColor = '#ef4444';
+                setTimeout(() => {
+                    input.classList.remove('puzzle-shake');
+                    input.style.borderColor = '';
+                }, 500);
+                alert('❌ Jawaban belum tepat! Coba hitung lagi dengan teliti 🤔');
+            }
+        }
+
+        // Initialize memory game
+        function initMemoryGame() {
+            const container = document.getElementById('memoryItems');
+            container.innerHTML = '';
+            memoryOrder = [];
+            
+            // Shuffle the memory items
+            const shuffledItems = [...memoryItems].sort(() => Math.random() - 0.5);
+            
+            shuffledItems.forEach((item, index) => {
+                const div = document.createElement('div');
+                div.className = 'memory-item bg-white/20 p-4 rounded-lg cursor-pointer hover:bg-white/30 transition-all duration-300 border border-white/30';
+                div.textContent = item;
+                div.onclick = () => selectMemory(item, memoryItems.indexOf(item) + 1);
+                container.appendChild(div);
+            });
+            
+            updateSelectedOrder();
+            console.log('Memory game initialized');
+        }
+
+        // Select memory item
+        function selectMemory(item, correctIndex) {
+            const items = document.querySelectorAll('.memory-item');
+            let clickedItem = null;
+            
+            items.forEach(el => {
+                if (el.textContent === item) {
+                    clickedItem = el;
+                }
+            });
+            
+            if (clickedItem.classList.contains('selected')) {
+                // Deselect
+                clickedItem.classList.remove('selected');
+                memoryOrder = memoryOrder.filter(order => order !== correctIndex);
+            } else {
+                // Select
+                clickedItem.classList.add('selected');
+                memoryOrder.push(correctIndex);
+            }
+            
+            updateSelectedOrder();
+            console.log('Memory order:', memoryOrder);
+        }
+
+        // Update selected order display
+        function updateSelectedOrder() {
+            const orderText = memoryOrder.length > 0 ? memoryOrder.join(' → ') : '-';
+            document.getElementById('selectedOrder').textContent = orderText;
+        }
+
+        // Reset memory selection
+        function resetMemory() {
+            memoryOrder = [];
+            document.querySelectorAll('.memory-item').forEach(item => {
+                item.classList.remove('selected');
+            });
+            updateSelectedOrder();
+        }
+
+        // Check memory order
+        function checkMemory() {
+            console.log('Checking memory order:', memoryOrder, 'vs', correctMemoryOrder);
+            
+            if (memoryOrder.length !== 4) {
+                alert('⚠️ Pilih semua 4 kenangan terlebih dahulu!');
+                return;
+            }
+            
+            if (JSON.stringify(memoryOrder.sort((a,b) => a-b)) === JSON.stringify(correctMemoryOrder)) {
+                document.getElementById('level3').classList.add('success-animation');
+                setTimeout(() => {
+                    showLevel(4);
+                }, 600);
+            } else {
+                alert('❌ Urutan belum benar!\n\nIngat-ingat lagi kronologi kenangan kita:\n1. Pertama bertemu\n2. Chat pertama\n3. Jalan pertama\n4. Mulai jatuh cinta');
+                resetMemory();
+            }
+        }
+
+        // Show specific level
+        function showLevel(level) {
+            // Hide all sections
+            const sections = ['level1', 'level2', 'level3', 'finalMessage', 'responseSection', 'finalResponse'];
+            sections.forEach(id => {
+                document.getElementById(id).classList.add('hidden');
+            });
+            
+            // Show target level
+            if (level <= 3) {
+                document.getElementById(`level${level}`).classList.remove('hidden');
+            } else if (level === 4) {
+                document.getElementById('finalMessage').classList.remove('hidden');
+            }
+            
+            currentLevel = level;
+            console.log('Showing level:', level);
+        }
+
+        // Show response options
+        function showResponse() {
+            document.getElementById('finalMessage').classList.add('hidden');
+            document.getElementById('responseSection').classList.remove('hidden');
+        }
+
+        // Give response
+        function giveResponse(type) {
+            document.getElementById('responseSection').classList.add('hidden');
+            document.getElementById('finalResponse').classList.remove('hidden');
+            
+            const responses = {
+                'yes': {
+                    message: 'Terima kasih, sayang! 💕',
+                    detail: 'Jawaban ini membuat hatiku sangat bahagia. Aku akan bekerja keras untuk menjadi pria yang layak untukmu. Terima kasih sudah mau menungguku dengan sabar. Cinta kita akan semakin kuat dengan waktu! 🌹'
+                },
+                'maybe': {
+                    message: 'Aku mengerti, sayang 🤗',
+                    detail: 'Tidak apa-apa, aku menghargai kejujuranmu. Ambil waktu yang kamu butuhkan untuk berpikir. Yang penting kamu tahu bahwa perasaanku tulus dan aku akan terus berusaha menjadi lebih baik. Apapun keputusanmu nanti, aku akan menghormatinya. 💙'
+                },
+                'talk': {
+                    message: 'Mari kita bicarakan ini 💬',
+                    detail: 'Aku senang kamu mau membicarakan ini lebih lanjut. Komunikasi yang terbuka sangat penting dalam hubungan kita. Aku siap mendengarkan semua yang ingin kamu sampaikan dan kita bisa merencanakan masa depan bersama-sama. 🤝'
+                }
+            };
+            
+            document.getElementById('responseMessage').textContent = responses[type].message;
+            document.getElementById('responseDetail').textContent = responses[type].detail;
+        }
+
+        // Restart the app
+        function restart() {
+            document.getElementById('passwordInput').value = '';
+            document.getElementById('mathAnswer').value = '';
+            memoryOrder = [];
+            showLevel(1);
+        }
+
+        // Initialize when page loads
+        window.onload = init;
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9760b644a0089c27',t:'MTc1NjM1MTYzNy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
